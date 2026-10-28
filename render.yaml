@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: trendlens
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+
+    envVars:
+      - key: CORS_ORIGINS
+        value: https://trendlens.bytex.my

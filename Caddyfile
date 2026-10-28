@@ -1,0 +1,4 @@
+trendlens.bytex.my {
+    encode zstd gzip
+    reverse_proxy trendlens:8000
+}

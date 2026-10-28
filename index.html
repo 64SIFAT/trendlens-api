@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0a1220" />
+  <meta name="description" content="Compare real NASA Earth-system data, quantify uncertainty, and investigate where trends differ." />
+  <title>TrendLens — Earth System Trend Detective</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="TrendLens home"><span class="brand-mark">T<span>↗</span></span><span>trend<span class="brand-light">lens</span><small>EARTH SYSTEM TREND DETECTIVE</small></span></a>
+    <div class="top-actions"><span class="live-dot"></span><span>NASA DATA WORKSPACE</span><a id="api-docs-link" href="/docs" target="_blank" rel="noreferrer">API docs ↗</a></div>
+  </header>
+  <main class="shell">
+    <section class="hero">
+      <div class="eyebrow"><span class="eyebrow-line"></span> OBSERVE · COMPARE · UNDERSTAND</div>
+      <h1>Discover where Earth<br><em>is changing differently.</em></h1>
+      <p class="hero-copy">Compare precipitation trends across rectangular study areas using real NASA data, transparent statistics, and uncertainty you can inspect.</p>
+      <div class="hero-meta"><span><span class="meta-icon">◉</span> NASA POWER</span><span><span class="meta-icon">⌁</span> Monthly observations</span><span><span class="meta-icon">↗</span> Reproducible analysis</span></div>
+    </section>
+
+    <section class="workspace" aria-labelledby="setup-title">
+      <div class="section-heading"><div><div class="section-kicker">01 / INVESTIGATION SETUP</div><h2 id="setup-title">Set up your comparison</h2></div><div class="step-pill"><span>01</span> Configure <b>—</b> <span>02</span> Analyze <b>—</b> <span>03</span> Interpret</div></div>
+      <form id="analysis-form">
+        <div class="location-grid">
+          <article class="location-card location-a">
+            <div class="location-top"><span class="location-index">A</span><span class="location-tag">REFERENCE LOCATION</span></div>
+            <label for="place-a">Location name</label><select id="place-a" class="preset-select"></select>
+            <div class="coord-grid"><div><label for="lat-min-a">South latitude</label><input id="lat-min-a" type="number" step="any" min="-90" max="90" required value="2.75"></div><div><label for="lat-max-a">North latitude</label><input id="lat-max-a" type="number" step="any" min="-90" max="90" required value="3.50"></div><div><label for="lon-min-a">West longitude</label><input id="lon-min-a" type="number" step="any" min="-180" max="180" required value="101.30"></div><div><label for="lon-max-a">East longitude</label><input id="lon-max-a" type="number" step="any" min="-180" max="180" required value="102.05"></div></div>
+            <div class="coord-note"><span>⌖</span> Rectangular study area · weighted grid-cell mean</div>
+          </article>
+          <div class="versus"><span>VS</span><div></div></div>
+          <article class="location-card location-b">
+            <div class="location-top"><span class="location-index">B</span><span class="location-tag">COMPARISON LOCATION</span></div>
+            <label for="place-b">Location name</label><select id="place-b" class="preset-select"></select>
+            <div class="coord-grid"><div><label for="lat-min-b">South latitude</label><input id="lat-min-b" type="number" step="any" min="-90" max="90" required value="23.45"></div><div><label for="lat-max-b">North latitude</label><input id="lat-max-b" type="number" step="any" min="-90" max="90" required value="24.15"></div><div><label for="lon-min-b">West longitude</label><input id="lon-min-b" type="number" step="any" min="-180" max="180" required value="90.05"></div><div><label for="lon-max-b">East longitude</label><input id="lon-max-b" type="number" step="any" min="-180" max="180" required value="90.80"></div></div>
+            <div class="coord-note"><span>⌖</span> Rectangular study area · weighted grid-cell mean</div>
+          </article>
+        </div>
+        <div class="settings-row">
+          <div class="dataset-chip"><span class="dataset-icon">◌</span><div><b>Corrected precipitation</b><small>NASA POWER · PRECTOTCORR · mm/day</small></div><span class="verified">SOURCE</span></div>
+          <div class="year-controls"><div><label for="start-year">From year</label><select id="start-year"></select></div><span class="year-dash">—</span><div><label for="end-year">To year</label><select id="end-year"></select></div></div>
+          <button id="run-button" class="run-button" type="submit"><span class="button-icon">↗</span><span>Run comparison</span></button>
+        </div>
+        <p class="form-hint"><span>ⓘ</span> Choose at least 10 years of overlapping data. The latest complete year is used to avoid incomplete-year bias.</p>
+      </form>
+    </section>
+
+    <section id="error-panel" class="error-panel" hidden role="alert"><span class="error-icon">!</span><div><b>We couldn't complete this investigation.</b><p id="error-message"></p><button id="dismiss-error" class="text-button" type="button">Dismiss</button></div></section>
+    <section id="welcome-panel" class="welcome-panel"><div class="welcome-art"><div class="orbit orbit-a"></div><div class="orbit orbit-b"></div><div class="orbit orbit-c"></div><div class="earth-core"><span>↗</span></div><div class="orbit-dot dot-a"></div><div class="orbit-dot dot-b"></div><div class="orbit-dot dot-c"></div></div><div class="welcome-text"><div class="section-kicker">YOUR NEXT DISCOVERY STARTS HERE</div><h2>Ask a better question<br>of the data.</h2><p>Compare two places, follow the long-term signal, and see whether the difference is supported by the evidence—not just by how the chart looks.</p><div class="welcome-points"><span>✓ Real NASA observations</span><span>✓ Robust trend estimates</span><span>✓ Uncertainty made visible</span></div></div></section>
+
+    <section id="results" class="results" hidden aria-live="polite">
+      <div class="section-heading result-heading"><div><div class="section-kicker">02 / RESULTS & EVIDENCE</div><h2>Your trend investigation</h2><p id="result-subtitle" class="muted"></p></div><button id="export-button" class="export-button" type="button">↓ Export evidence JSON</button></div>
+      <div class="summary-grid" id="summary-grid"></div>
+      <article class="chart-panel"><div class="chart-header"><div><div class="section-kicker">TIME SERIES</div><h3>Annual precipitation signal</h3><p class="muted">Day-weighted annual means from monthly values · mm/day</p></div><div class="legend" id="chart-legend"></div></div><div class="chart-wrap"><canvas id="trend-chart" aria-label="Annual precipitation time series chart"></canvas></div><div class="chart-foot"><span>Solid line: annual mean</span><span>Dashed line: Theil–Sen trend estimate</span></div></article>
+      <div class="detail-grid"><article class="detail-card"><div class="section-kicker">TREND ESTIMATES</div><h3>What changed?</h3><div id="trend-details"></div></article><article class="detail-card difference-card"><div class="section-kicker">TREND FLIP FINDER</div><h3>How different are the trends?</h3><div id="difference-details"></div><div class="difference-note">The comparison estimates the difference between slopes directly. It does not infer a difference by comparing two separate p-values.</div></article></div>
+      <article class="method-panel"><div class="method-heading"><div><div class="section-kicker">03 / SCIENTIFIC TRANSPARENCY</div><h3>Method, provenance & caveats</h3></div><span class="method-badge">INSPECTABLE</span></div><div id="method-details" class="method-grid"></div><details class="raw-details"><summary>View raw evidence and retrieval metadata</summary><pre id="raw-json"></pre></details></article>
+    </section>
+    <footer><div class="footer-brand">TrendLens <span>×</span> NASA Open Data</div><p>Built for investigation, not attribution. Results depend on the selected data, assumptions, and uncertainty method.</p><div class="footer-links"><a href="https://power.larc.nasa.gov/" target="_blank" rel="noreferrer">NASA POWER ↗</a><a href="https://www.spaceappschallenge.org/2026/" target="_blank" rel="noreferrer">NASA Space Apps 2026 ↗</a></div></footer>
+  </main>
+  <div id="loading-overlay" class="loading-overlay" hidden><div class="loader-card"><div class="loader-ring"></div><div><b>Following the signal…</b><p id="loading-status">Retrieving NASA observations</p><small>Fetching data and estimating uncertainty</small></div></div></div>
+  <script src="/static/app.js"></script>
+</body>
+</html>
